@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Results{% endblock %}
+{% block content %}
+<body>
+<style>
+  h1 {text-align: center; padding: 100px; text-colour: #123456;}
+  body {padding: 5px; text-align: center;}
+  th {padding: 5px; text-align: center;}
+  table {margin-left: auto; margin-right: auto; text-align: center;}
+</style>
+
+<h1>Albums for {{ artist }}</h1>
+<table>
+  <thead>
+    <th>
+      <a>Album Name</a>
+    </th>
+    <th>
+      <a>Year Released</a>
+    </th>
+  </thead>
+  <tbody>
+    {% for album in albums|sort(reverse= reverse, attribute= 'strAlbum') %}
+    <tr>
+      <td>{{ album.strAlbum }}</td>
+      <td>{{ album.intYearReleased }}</td>
+    </tr>
+    {% endfor %}
+    <tr>
+      <td>{{ album.strAlbum }}</td>
+      <td>{{ album.intYearReleased }}</td>
+    </tr>
+    {% endfor %}
+    {% endif %}
+  </tbody>
+</table>
+</body>
+{% endblock %}

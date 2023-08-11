@@ -1,25 +1,19 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
 <head>
-{% if title %}
-<title>{{ title }} - NorthsideDJ</title>
-{% else %}
-<title>Welcome to NorthsideDJ</title>
-{% endif %}
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <title>{% block title %}{% endblock %}</title>
 </head>
-<body>
-<div>NorthsideDJ: <a href="/index">Home</a>
-    <a href="/login">Login</a></div>
-<hr>
-{% with messages = get_flashed_messages() %}
-{% if messages %}
-<ul>
-{% for message in messages %}
-<li>{{ message }}</li>
-{% endfor %}
-</ul>
-{% endif %}
-{% endwith %}
-{% block content %}{% endblock %}
+<div class="w3-bar w3-dark-grey">
+  <a class="w3-bar-item w3-button w3-mobile w3-green" href="{{ url_for('home') }}" style="width:9%" >DJ Home</a>
+  <a class="w3-bar-item w3-button w3-mobile" href="{{ url_for('register') }}" style="width:30%" >Events</a>
+  <a class="w3-bar-item w3-button w3-mobile" href="{{ url_for('search') }}" style="width:30%" >Search</a>
+  <a class="w3-bar-item w3-button w3-mobile" href="{{ url_for('register') }}" style="width:30%" >Vote</a>
+</div>
+<body class="w3-container">
+    {% block content %}
+    {% endblock %}
 </body>
+<footer>@Northside DJ 2023</footer>
+<br>
 </html>

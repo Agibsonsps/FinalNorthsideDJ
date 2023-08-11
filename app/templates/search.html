@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Search{% endblock %}
+{% block content %}
+<body>
+<style>
+    h1 {text-align: center; padding: 10px; text-colour: #123456;}
+    form {padding: 5px; text-align: center;}
+</style>
+    <h1>Search for Music Albums</h1>
+    <form action = "/" method = "post">
+    <label>Artist Name:</label>
+    <input type="text" name="artist" required>
+        <button type="submit" >Submit</button>
+        <input type="hidden" name="artist" value="{{ artist }}">
+    </form>
+</body>
+{% endblock %}
+```
