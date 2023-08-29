@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Results{% endblock %}
+{% block content %}
+<body>
+<style>
+  h1 {text-align: center; padding: 100px; text-colour: #123456;}
+  body {padding: 5px; text-align: center;}
+  th {padding: 5px; text-align: center;}
+  table {margin-left: auto; margin-right: auto; text-align: center;}
+  #textboxid {height:200px; font-size:14pt;}
+</style>
+<h1>Create Event</h1>
+<form method="post" class="w3-container w3-card-4 w3-padding">
+        <label>Name of event:</label>
+        <input type="text" name="event_name" required>
+    <label>Location:</label>
+        <input type="text" name="location" required>
+    <label>Date:</label>
+        <input type="text" name="time" required>
+    <label>Description:</label>
+        <input type="text" name="description" required>
+<button type="submit" class="w3-button w3-green" formmethod="post">Create Event</button>
+    </form>
+</body>
+{% endblock %}
+```

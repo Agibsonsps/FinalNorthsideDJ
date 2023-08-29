@@ -3,36 +3,26 @@
 {% block content %}
 <body>
 <style>
-  h1 {text-align: center; padding: 100px; text-colour: #123456;}
+  h1 {text-align: center; padding: 100px; color: #123456;}
   body {padding: 5px; text-align: center;}
   th {padding: 5px; text-align: center;}
   table {margin-left: auto; margin-right: auto; text-align: center;}
+  .album-box {width: 30%; display: inline-block; margin: 1%; border: 1px solid #ccc; padding: 10px;}
 </style>
 
 <h1>Albums for {{ artist }}</h1>
-<table>
-  <thead>
-    <th>
-      <a>Album Name</a>
-    </th>
-    <th>
-      <a>Year Released</a>
-    </th>
-  </thead>
-  <tbody>
-    {% for album in albums|sort(reverse= reverse, attribute= 'strAlbum') %}
-    <tr>
-      <td>{{ album.strAlbum }}</td>
-      <td>{{ album.intYearReleased }}</td>
-    </tr>
-    {% endfor %}
-    <tr>
-      <td>{{ album.strAlbum }}</td>
-      <td>{{ album.intYearReleased }}</td>
-    </tr>
-    {% endfor %}
+<div class="album-container">
+  {% for album in albums %}
+    <a href="{{ url_for('results', albumID=album.idAlbum) }}" class="album-box">
+<img src="{{ album.strAlbumThumb }}" style = "width:100px;">
+      <p>{{ album.strAlbum }}</p>
+      <p>{{ album.intYearReleased }}</p>
+      <p hidden>{{ album.idAlbum }}</p>
+    </a>
+    {% if loop.index % 3 == 0 %}
+      <br>
     {% endif %}
-  </tbody>
-</table>
+  {% endfor %}
+</div>
 </body>
 {% endblock %}

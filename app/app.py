@@ -1,18 +1,11 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, session  # for Flask
+from flask import Flask, render_template, request, redirect, url_for, flash, session
 import bcrypt
 import sqlite3
 import requests
 
+
 app = Flask(__name__)
 app.secret_key = 's3cr3t'
-
-
-def init_db():
-    with app.app_context():
-        db = sqlite3.connect('users.db')
-        cursor = db.cursor()
-        cursor.execute('''CREATE TABLE IF NOT EXISTS users (username TEXT UNIQUE, password TEXT)''')
-        db.commit()
 
 
 def hash_password(password):
@@ -24,7 +17,7 @@ def check_password(hashed_password, user_password):
 
 
 @app.route('/')
-def home():
+def index():
     if 'user' not in session:
         return redirect(url_for('login'))
     return render_template('index.html')
@@ -33,14 +26,16 @@ def home():
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
+        name = request.form['name']
+        email = request.form['email']
         username = request.form['username']
         password = request.form['password']
-        #hashed_password = generate_password_hash(password, method='sha256')
         hashed_password = hash_password(password)
         try:
-            with sqlite3.connect('users.db') as db:
+            with sqlite3.connect('NSDJ.db') as db:
                 cursor = db.cursor()
-                cursor.execute('INSERT INTO users (username, password) VALUES (?, ?)', (username, hashed_password))
+                # atendee_ID = cursor.fetchone()[0] + 1 #no longer required, autoincremented
+                cursor.execute('INSERT INTO users (name, email, username, hashed_password) VALUES (?, ?, ?, ?)', (name, email, username, hashed_password))
                 db.commit()
             flash('Registered successfully!', 'success')
             return redirect(url_for('login'))
@@ -54,14 +49,14 @@ def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        with sqlite3.connect('users.db') as db:
+        with sqlite3.connect('NSDJ.db') as db:
             cursor = db.cursor()
             cursor.execute('SELECT * FROM users WHERE username = ?', (username,))
             user = cursor.fetchone()
-            #if user and check_password_hash(user[1], password):
-            if user and check_password(user[1], password):
+            cursor.close()
+            if user and check_password(user[4], password):
                 session['user'] = user[0]
-                return redirect(url_for('home'))
+                return redirect(url_for('index'))
             else:
                 flash('Invalid username or password!', 'danger')
     return render_template('login.html')
@@ -70,34 +65,133 @@ def login():
 @app.route('/logout')
 def logout():
     session.pop('user', None)
-    return redirect(url_for('home'))
+    return redirect(url_for('index'))
 
 
 @app.route('/search', methods=['GET', 'POST'])
 def search():
-    print("Searching...")
-    #if 'user' not in session:
-    #    return redirect(url_for('login'))
+# this gets the artist name and returns albyms to results.html
     if request.method == 'POST':
         artist_name = request.form['artist']
-        print(artist_name)
         albums = search_albums(artist_name)
         return render_template('results.html', artist=artist_name, albums=albums)
     return render_template('search.html')
 
 
+@app.route('/results/<albumID>', methods=['GET', 'POST'])
+def results(albumID):
+    print(albumID)
+    songs = search_songs(albumID)
+    strAlbum = songs[0]['strAlbum']
+    return render_template('results_albumid.html', songs=songs, strAlbum=strAlbum)
+
+
 def search_albums(artist_name):
-    API_KEY = '523532'
-    URL = f'https://theaudiodb.com/api/v1/json/{API_KEY}/searchalbum.php?s={artist_name}'
-    print(URL)
-    response = requests.get(URL)
-    print(response)
+    api_key = '523532'
+    url = f'https://theaudiodb.com/api/v1/json/{api_key}/searchalbum.php?s={artist_name}'
+    response = requests.get(url)
     data = response.json()
-    print(data)
     albums = data['album']
+    albumID = albums[0]['idAlbum']
     return albums
 
 
+def search_songs(albumID):
+    api_key = '523532'
+    url = f'https://theaudiodb.com/api/v1/json/{api_key}/track.php?m={albumID}'
+    response = requests.get(url)
+    data = response.json()
+    songs = data['track']
+    print(songs)
+    return songs
+
+
+
+
+
+# @app.route('/album/<albumID>', methods=['GET', 'POST'])
+# def album_data():
+    # if request.method == 'POST':
+        # album_name = request.form['album']
+        # songs = search_songs(album_name)
+        # albumID = songs[0]['idAlbum']
+        # search_songs(albumID)
+        # return render_template('album.html', album=album_name, songs=songs, albumID=albumID, song=songs)
+    # return render_template('album.html')
+
+
+@app.route('/event', methods=['GET', 'POST'])
+# this get all event info and returns to event.html
+def event():
+    events = None
+    with sqlite3.connect('NSDJ.db') as db:
+        cursor = db.cursor()
+        cursor.execute('''SELECT * FROM events''')
+        events = cursor.fetchall()
+        print(events)
+        return render_template('event.html', events=events)
+
+
+@app.route('/create_event', methods=['GET', 'POST'])
+# this creates a new event and returns to event.html
+def create_event():
+    print("started function create_event")
+    if request.method == 'POST':
+        print("started if request.method == 'POST'")
+        event_name = request.form['event_name']
+        time = request.form['time']
+        location = request.form['location']
+        description = request.form['description']
+        try:
+            with sqlite3.connect('NSDJ.db') as db:
+                cursor = db.cursor()
+                print("started with sqlite3.connect('NSDJ.db') as db:")
+                cursor.execute('''INSERT INTO events (name, time, location, description) VALUES (?, ?, ?, ?)''', (event_name, time, location, description))
+                db.commit()
+                # cursor.execute('''CREATE TABLE IF NOT EXISTS event_id_attendees (attendee_ID TEXT, event_ID TEXT)''')
+                # cursor.execute('''CREATE TABLE IF NOT EXISTS event_id_songs (song_ID TEXT, event_ID TEXT)''')
+                # playlist name = event name + playlist
+                playlist_name = event_name + ' _playlist'
+                cursor.execute("SELECT * FROM events WHERE name = ?", (event_name,))
+                event_ID = cursor.fetchone()[0]
+                print(event_ID)
+                # make playlist table
+                cursor.execute('''CREATE TABLE IF NOT EXISTS playlists (playlist_ID INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, event_ID INTEGER)''')
+                cursor.execute('''INSERT INTO playlists (name, event_ID) VALUES (?, ?)''', (playlist_name, event_ID))
+                # make song table
+                cursor.execute('''CREATE TABLE IF NOT EXISTS songs (song_ID INTEGER PRIMARY KEY, name TEXT, artist TEXT, album TEXT, playlist_ID INTEGER, votes INTEGER)''')
+                # make attendee table
+                cursor.execute('''CREATE TABLE IF NOT EXISTS attendees (attendee_ID INTEGER PRIMARY KEY, name TEXT, email TEXT, username TEXT, hashed_password TEXT)''')
+                db.commit()
+
+            return render_template('event.html')
+        except sqlite3.IntegrityError:
+            flash('Event already exists!', 'danger')
+        db.close()
+    return render_template('create_event.html')
+
+
+@app.route('/event_data')
+def event_data():
+    with sqlite3.connect('NSDJ.db') as db:
+        cursor = db.cursor()
+        cursor.execute('''SELECT * FROM events''')
+        events = cursor.fetchall()
+    return render_template('event_data.html', events=events)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 if __name__ == '__main__':
-    init_db()
     app.run(debug=True)

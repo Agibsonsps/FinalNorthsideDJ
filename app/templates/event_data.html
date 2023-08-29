@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Event Data{% endblock %}
+{% block content %}
+<body>
+<style>
+    h1 {text-align: center; padding: 10px; text-colour: #123456;}
+    form {padding: 5px; text-align: center;}
+</style>
+
+<h1>Event Data</h1>
+{{ event.event_name }}
+{{ event.location }}
+{{ event.time }}
+{{ event.description }}
+</body>
+{% endblock %}
+```
