@@ -80,10 +80,24 @@ def search():
 
 @app.route('/results/<albumID>', methods=['GET', 'POST'])
 def results(albumID):
-    print(albumID)
+    print("Album ID: ", albumID)
     songs = search_songs(albumID)
     strAlbum = songs[0]['strAlbum']
-    return render_template('results_albumid.html', songs=songs, strAlbum=strAlbum)
+    return render_template('results_albumid.html', songs=songs, strAlbum=strAlbum, albumID=albumID)
+
+
+@app.route('/results/<albumID>/<songID>', methods=['GET', 'POST'])
+def results_songs(albumID, songID):
+    print("Album ID-Songs: ", albumID)
+    print("Song ID: ", songID)
+    print(request.method)
+    if request.method == 'POST':
+        with sqlite3.connect('NSDJ.db') as db:
+            cursor = db.cursor()
+            # add song to event db
+            cursor.close()
+        return render_template('event.html')
+    return render_template('results_songid.html', albumID=albumID, songID=songID)
 
 
 def search_albums(artist_name):
@@ -102,7 +116,7 @@ def search_songs(albumID):
     response = requests.get(url)
     data = response.json()
     songs = data['track']
-    print(songs)
+    print("Song info:", songs)
     return songs
 
 

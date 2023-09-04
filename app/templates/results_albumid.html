@@ -10,22 +10,20 @@
 </style>
 
 <h1>Track List for "{{ strAlbum }}"</h1>
-<h2>By "{{ songs[strArtist] }}</h2>
+<h2 style = "">By "{{ songs[0]["strArtist"] }}"</h2>
 <div class="album-container">
    <ul>
     {% for song in songs %}
+       <button type="submit" class="w3-button w3-blue" href="{{ url_for('results_songs', albumID=albumID, songID=song.idTrack) }}">Vote</button>
         <li>
-            <h2>{{ song['strTrack'] }}</h2>
+            <a>
+                <h2>{{ song['strTrack'] }}</h2></a>
+
             <p>Genre: {{ song['strGenre'] }}</p>
-            <p>Duration: {{ song['intDuration'] }} milliseconds</p>
-            <p>Description: {{ song['strDescriptionEN'] }}</p>
-            {% if song['strMusicVid'] %}
-                <p>Music Video: <a href="{{ song['strMusicVid'] }}" target="_blank">Watch</a></p>
-            {% endif %}
-            {% if song['strMusicVidScreen1'] %}
-                <img src="{{ song['strMusicVidScreen1'] }}" alt="Music Video Screenshot 1">
-            {% endif %}
+            <p>Duration: {{ song['intDuration'] }} seconds</p>
+            <p>Year: {{ song['strDescriptionEN'] }}</p>
         </li>
+
     {% endfor %}
     </ul>
 </div>
