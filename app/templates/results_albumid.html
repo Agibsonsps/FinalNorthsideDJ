@@ -14,11 +14,9 @@
 <div class="album-container">
    <ul>
     {% for song in songs %}
-       <button type="submit" class="w3-button w3-blue" href="{{ url_for('results_songs', albumID=albumID, songID=song.idTrack) }}">Vote</button>
         <li>
-            <a>
-                <h2>{{ song['strTrack'] }}</h2></a>
-
+            <a href="{{ url_for('results_songs', albumID=albumID, songID=song.idTrack) }}">
+                <h2 >{{ song['strTrack'] }}</h2></a>
             <p>Genre: {{ song['strGenre'] }}</p>
             <p>Duration: {{ song['intDuration'] }} seconds</p>
             <p>Year: {{ song['strDescriptionEN'] }}</p>

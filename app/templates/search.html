@@ -13,6 +13,13 @@
         <button type="submit" >Submit</button>
         <input type="hidden" name="artist" value="{{ artist }}">
     </form>
+{% for category, message in get_flashed_messages(with_categories=true) %}
+        <div class="w3-panel w3-{{ category }} w3-display-container">
+            <span onclick="this.parentElement.style.display='none'"
+                  class="w3-button w3-{{ category }} w3-large w3-display-topright">&times;</span>
+            {{ message }}
+        </div>
+    {% endfor %}
 </body>
 {% endblock %}
 ```

@@ -91,12 +91,23 @@ def results_songs(albumID, songID):
     print("Album ID-Songs: ", albumID)
     print("Song ID: ", songID)
     print(request.method)
+    songinfo = song_info(songID)
+    print(songinfo)
+
     if request.method == 'POST':
         with sqlite3.connect('NSDJ.db') as db:
             cursor = db.cursor()
-            # add song to event db
+            cursor.execute('''SELECT * FROM songs'''+str(6)+''' WHERE song_ID = ?''', (int(songID),))
+            eventsong = cursor.fetchone()
+            votes = 0
+            if eventsong:
+                votes = eventsong[4]
+            votes += 1
+            cursor.execute('''INSERT OR REPLACE INTO songs'''+str(6)+''' (song_ID, name, artist, album, votes) VALUES (?, ?, ?, ?, ?)''', (int(songID), songinfo['strTrack'], songinfo['strArtist'], songinfo['strAlbum'], votes))
+            db.commit()
             cursor.close()
-        return render_template('event.html')
+        flash('Song added to playlist!', 'success')
+        return redirect(url_for('search'))
     return render_template('results_songid.html', albumID=albumID, songID=songID)
 
 
@@ -120,8 +131,14 @@ def search_songs(albumID):
     return songs
 
 
-
-
+def song_info(songID):
+    api_key = '523532'
+    url = f'https://theaudiodb.com/api/v1/json/{api_key}/track.php?h={songID}'
+    response = requests.get(url)
+    data = response.json()
+    song = data['track']
+    print("Song info:", song)
+    return song[0]
 
 # @app.route('/album/<albumID>', methods=['GET', 'POST'])
 # def album_data():
@@ -142,8 +159,18 @@ def event():
         cursor = db.cursor()
         cursor.execute('''SELECT * FROM events''')
         events = cursor.fetchall()
+
+
+        votedata = {}
+
+        for v in votedata:
+            cursor.execute('''SELECT * FROM songs''' + str(v[0]))
+            votedata[v[0]] = cursor.fetchall()
+
+        print(votedata)
+
         print(events)
-        return render_template('event.html', events=events)
+        return render_template('event.html', events=events,votedata=votedata)
 
 
 @app.route('/create_event', methods=['GET', 'POST'])
@@ -170,12 +197,10 @@ def create_event():
                 event_ID = cursor.fetchone()[0]
                 print(event_ID)
                 # make playlist table
-                cursor.execute('''CREATE TABLE IF NOT EXISTS playlists (playlist_ID INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, event_ID INTEGER)''')
-                cursor.execute('''INSERT INTO playlists (name, event_ID) VALUES (?, ?)''', (playlist_name, event_ID))
                 # make song table
-                cursor.execute('''CREATE TABLE IF NOT EXISTS songs (song_ID INTEGER PRIMARY KEY, name TEXT, artist TEXT, album TEXT, playlist_ID INTEGER, votes INTEGER)''')
+                cursor.execute('''CREATE TABLE IF NOT EXISTS songs'''+str(event_ID)+''' (song_ID INTEGER PRIMARY KEY, name TEXT, artist TEXT, album TEXT, votes INTEGER)''')
                 # make attendee table
-                cursor.execute('''CREATE TABLE IF NOT EXISTS attendees (attendee_ID INTEGER PRIMARY KEY, name TEXT, email TEXT, username TEXT, hashed_password TEXT)''')
+                cursor.execute('''CREATE TABLE IF NOT EXISTS attendees (event_ID INTEGER PRIMARY KEY, name TEXT, email TEXT, username TEXT, hashed_password TEXT)''')
                 db.commit()
 
             return render_template('event.html')
