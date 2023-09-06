@@ -1,37 +1,52 @@
 {% extends "base.html" %}
 {% block title %}Results{% endblock %}
 {% block content %}
-<body>
 <style>
-  table {margin-left: auto; margin-right: auto; text-align: center;}
-     .event-block {
-      border: 1px solid #ccc;
-      padding: 5px;
-      margin: 5px;
-      width: calc(33.33% - 50px); /* Distribute events in rows of three */
-      display: inline-block;
-      vertical-align: top;
-      box-sizing: border-box;
-    }
+  body {
+    text-align: center;
+  }
 
+  table {
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+  }
+
+  .event-block {
+    border: 1px solid #ccc;
+    padding: 5px;
+    margin: 5px;
+    width: calc(33.33% - 50px); /* Distribute events in rows of three */
+    display: inline-block;
+    vertical-align: top;
+    box-sizing: border-box;
+  }
+
+  h1 {
+    text-align: center;
+  }
 </style>
-<body>
-<body>
-  <h1>Event List</h1>
+
+<h1>Event List</h1>
 <div id="event-container">
     {% for event in events %}
       <div class="event-block">
         <h2>{{ event[1] }}</h2> <!-- Event name -->
         <p>Time: {{ event[2] }}</p> <!-- Event time -->
         <p>Location: {{ event[3] }}</p> <!-- Event location -->
-        <p>Description: {{ event[4] }}</p> <!-- Event description -->
+        <p>Description: {{ event[4] }}</p>
+        <p>Current Playlist:</p>
+        {% for song in songsdata %}
+          <p>{{ song[1] }} • {{song[2]}} • {{song[4]}}</p>
+        {% endfor %}
       </div>
       {% if loop.index % 3 == 0 %}
         <br style="clear: both;" /> <!-- Clear the float after every three events -->
       {% endif %}
-    {% endfor %}
-  </div>
-</body>
-<a href = "{{ url_for('create_event') }}">Create an Event</a>
+  {% endfor %}
+</div>
+
+<br>
+<div><a href="{{ url_for('create_event') }}">Create an Event</a></div>
+<br>
 {% endblock %}
-```

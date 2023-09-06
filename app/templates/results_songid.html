@@ -2,17 +2,14 @@
 {% block title %}Results{% endblock %}
 {% block content %}
 <body>
-{{ songID }}
-{{ albumID }}
+
+<h2>{{ songinfo['strTrack'] }}</h2>
+            <p>Artist: {{ songinfo['strArtist'] }}</p>
+            <p>Album: {{ songinfo['strAlbum'] }}</p>
+            <p>Genre: {{ songinfo['strGenre'] }}</p>
+            <p>Year: {{ songinfo['strDescriptionEN'] }}</p>
 <form method="post">
     <button type="submit" class="w3-button w3-blue">Vote</button>
             </form>
-{% for category, message in get_flashed_messages(with_categories=true) %}
-        <div class="w3-panel w3-{{ category }} w3-display-container">
-            <span onclick="this.parentElement.style.display='none'"
-                  class="w3-button w3-{{ category }} w3-large w3-display-topright">&times;</span>
-            {{ message }}
-        </div>
-{% endfor %}
 </body>
 {% endblock %}

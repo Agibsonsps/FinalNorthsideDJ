@@ -93,7 +93,6 @@ def results_songs(albumID, songID):
     print(request.method)
     songinfo = song_info(songID)
     print(songinfo)
-
     if request.method == 'POST':
         with sqlite3.connect('NSDJ.db') as db:
             cursor = db.cursor()
@@ -108,7 +107,7 @@ def results_songs(albumID, songID):
             cursor.close()
         flash('Song added to playlist!', 'success')
         return redirect(url_for('search'))
-    return render_template('results_songid.html', albumID=albumID, songID=songID)
+    return render_template('results_songid.html', albumID=albumID, songID=songID, songinfo=songinfo)
 
 
 def search_albums(artist_name):
@@ -159,18 +158,21 @@ def event():
         cursor = db.cursor()
         cursor.execute('''SELECT * FROM events''')
         events = cursor.fetchall()
-
-
         votedata = {}
-
         for v in votedata:
             cursor.execute('''SELECT * FROM songs''' + str(v[0]))
             votedata[v[0]] = cursor.fetchall()
-
         print(votedata)
+        cursor.execute('''SELECT * FROM songs''' + str(6))
+        songsdata = cursor.fetchall()
+        print(songsdata)
+        cursor.close()
+        songsdata.sort(key=sort_songs, reverse=True)
+        return render_template('event.html', events=events, votedata=votedata, songsdata=songsdata)
 
-        print(events)
-        return render_template('event.html', events=events,votedata=votedata)
+
+def sort_songs(data):
+    return data[4]
 
 
 @app.route('/create_event', methods=['GET', 'POST'])
@@ -195,15 +197,13 @@ def create_event():
                 playlist_name = event_name + ' _playlist'
                 cursor.execute("SELECT * FROM events WHERE name = ?", (event_name,))
                 event_ID = cursor.fetchone()[0]
-                print(event_ID)
                 # make playlist table
                 # make song table
                 cursor.execute('''CREATE TABLE IF NOT EXISTS songs'''+str(event_ID)+''' (song_ID INTEGER PRIMARY KEY, name TEXT, artist TEXT, album TEXT, votes INTEGER)''')
                 # make attendee table
                 cursor.execute('''CREATE TABLE IF NOT EXISTS attendees (event_ID INTEGER PRIMARY KEY, name TEXT, email TEXT, username TEXT, hashed_password TEXT)''')
                 db.commit()
-
-            return render_template('event.html')
+            return render_template('event.html', event_name=event_name, time=time, location=location, description=description)
         except sqlite3.IntegrityError:
             flash('Event already exists!', 'danger')
         db.close()
