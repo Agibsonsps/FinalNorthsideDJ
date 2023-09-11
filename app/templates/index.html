@@ -1,12 +1,65 @@
 {% extends "base.html" %}
 {% block title %}Home{% endblock %}
 {% block content %}
-    <h1>Welcome</h1>
-    {% if session['user'] %}
-        <p>You are logged in as {{ session['user'] }}!</p>
-        <a href="{{ url_for('logout') }}" class="w3-button w3-red">Logout</a>
-    {% else %}
-        <a href="{{ url_for('login') }}" class="w3-button w3-blue">Login</a>
+
+  <div style="display: flex; justify-content: space-between; align-items: center;">
+    <div style="text-align: left; padding-left: 20px;">
+      {% if session['user'] %}
+        <p>You are logged in as test!</p>
+      {% endif %}
+    </div>
+    <div>
+      {% if session['user'] %}
+        <a href="{{ url_for('logout') }}" class="w3-button w3-red" style="margin-right: 20px;">Logout</a>
+      {% else %}
+        <a href="{{ url_for('login') }}" class="w3-button w3-blue" style="margin-right: 20px;">Login</a>
         <a href="{{ url_for('register') }}" class="w3-button w3-green">Register</a>
-    {% endif %}
+      {% endif %}
+    </div>
+  </div>
+
+  <style>
+    body {
+      text-align: center;
+    }
+
+    table {
+      margin-left: auto;
+      margin-right: auto;
+      text-align: center;
+    }
+
+    .event-block {
+      border: 1px solid #ccc;
+      padding: 5px;
+      margin: 5px;
+      width: calc(33.33% - 50px); /* Distribute events in rows of three */
+      display: inline-block;
+      vertical-align: top;
+      box-sizing: border-box;
+    }
+
+    h1 {
+      text-align: center;
+    }
+  </style>
+  <h1>Upcoming Events</h1>
+  <div id="event-container">
+    {% for event in events %}
+      <div class="event-block">
+        <h2>{{ event[1] }}</h2> <!-- Event name -->
+        <p>Time: {{ event[2] }}</p> <!-- Event time -->
+        <p>Location: {{ event[3] }}</p> <!-- Event location -->
+        <p>Description: {{ event[4] }}</p>
+        <h3>Current Playlist:</h3>
+        {% for song in songsdata %}
+          <p>{{ song[1] }} • {{ song[2] }} • {{ song[4] }}</p>
+        {% endfor %}
+      </div>
+      {% if loop.index % 3 == 0 %}
+        <br style="clear: both;" /> <!-- Clear the float after every three events -->
+      {% endif %}
+    {% endfor %}
+  </div>
+<a href="{{ url_for('create_event') }}" class="w3-button w3-blue" style="margin-right: 20px;">Create an Event</a>
 {% endblock %}

@@ -26,8 +26,9 @@
     text-align: center;
   }
 </style>
-
+<div>
 <h1>Event List</h1>
+
 <div id="event-container">
     {% for event in events %}
       <div class="event-block">
@@ -35,7 +36,7 @@
         <p>Time: {{ event[2] }}</p> <!-- Event time -->
         <p>Location: {{ event[3] }}</p> <!-- Event location -->
         <p>Description: {{ event[4] }}</p>
-        <p>Current Playlist:</p>
+        <h3>Current Playlist:</h3>
         {% for song in songsdata %}
           <p>{{ song[1] }} • {{song[2]}} • {{song[4]}}</p>
         {% endfor %}
@@ -45,8 +46,8 @@
       {% endif %}
   {% endfor %}
 </div>
-
+  <a href="{{ url_for('create_event') }}" class="w3-button w3-blue" style="margin-right: 20px;">Create an Event</a></div>
 <br>
-<div><a href="{{ url_for('create_event') }}">Create an Event</a></div>
+<div></div>
 <br>
 {% endblock %}

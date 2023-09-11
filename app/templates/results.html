@@ -14,7 +14,7 @@
 <div class="album-container">
   {% for album in albums %}
     <a href="{{ url_for('results', albumID=album.idAlbum) }}" class="album-box">
-<img src="{{ album.strAlbumThumb }}" style = "width:100px;">
+<img src="{{ album.strAlbumThumb }}" style = "width:100px;" alt = "Album Cover for {{artists}}'s Album {{ album.strAlbum }}">
       <p>{{ album.strAlbum }}</p>
       <p>{{ album.intYearReleased }}</p>
       <p hidden>{{ album.idAlbum }}</p>

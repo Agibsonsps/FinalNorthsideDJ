@@ -25,6 +25,14 @@ cursor.execute('''
     )
 ''')
 
+cursor.execute('''
+    CREATE TABLE IF NOT EXISTS attendees
+    (
+        user_ID INTEGER,
+        event_ID INTEGER
+    )
+''')
+
 conn.commit()
 conn.close()
 
