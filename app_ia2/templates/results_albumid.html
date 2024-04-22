@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Album Details{% endblock %}
+{% block content %}
+<body>
+<style>
+    h1 {text-align: center; padding: 10px; color: #123456;}
+    .song-list {list-style: none; padding: 0;}
+    .song-item {padding: 10px; border: 1px solid #ccc; margin: 5px 0; display: flex; justify-content: space-between; align-items: center;}
+    .album-box {width: 30%; display: inline-block; margin: 1%; border: 1px solid #ccc; padding: 10px;}
+</style>
+
+<h1>Track List for "{{ strAlbum }}"</h1>
+<h2 style = "">By "{{ songs[0]["strArtist"] }}"</h2>
+<div class="album-container">
+   <ul>
+    {% for song in songs %}
+        <li>
+            <a href="{{ url_for('results_songs', albumID=albumID, songID=song.idTrack) }}">
+                <h2 >{{ song['strTrack'] }}</h2></a>
+            <p>Genre: {{ song['strGenre'] }}</p>
+            <p>Duration: {{ song['intDuration'] }} seconds</p>
+            <p>Year: {{ song['strDescriptionEN'] }}</p>
+        </li>
+
+    {% endfor %}
+    </ul>
+</div>
+</body>
+{% endblock %}

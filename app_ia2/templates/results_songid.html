@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Results{% endblock %}
+{% block content %}
+<body>
+
+<h2>{{ songinfo['strTrack'] }}</h2>
+            <p>Artist: {{ songinfo['strArtist'] }}</p>
+            <p>Album: {{ songinfo['strAlbum'] }}</p>
+            <p>Genre: {{ songinfo['strGenre'] }}</p>
+            <p>Year: {{ songinfo['strDescriptionEN'] }}</p>
+<form method="post">
+    <button type="submit" class="w3-button w3-blue">Vote</button>
+            </form>
+</body>
+{% endblock %}
