@@ -1,20 +1,19 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session
-import bcrypt
 import sqlite3
 import requests
-
+import pandas as pd
+from werkzeug.security import generate_password_hash, check_password_hash
 app = Flask(__name__)
 app.secret_key = 's3cr3t'
 
 
 def hash_password(password):
     # Hash the password using bcrypt for secure storage
-    return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+    return generate_password_hash(password, method='pbkdf2:sha256')
 
 
-def check_password(hashed_password, user_password):
-    # Check if a provided password matches the hashed password in the database
-    return bcrypt.checkpw(user_password.encode('utf-8'), hashed_password)
+gamesdoc = pd.read_excel('/Users/asgibsonpc2022/PycharmProjects/FinalNorthsideDJ/app_ia2/GameData.xlsx')
+print(gamesdoc.head())
 
 
 @app.route('/')
@@ -22,36 +21,39 @@ def index():
     # Display a list of events and their associated data
     # Prevent SQL injection by not directly inserting user input into SQL queries
     events = None
-    with sqlite3.connect('NSDJ.db') as db:
+    with sqlite3.connect('Esportsapp.db') as db:
         cursor = db.cursor()
         cursor.execute('''SELECT * FROM events''')
         events = cursor.fetchall()
         votedata = {}
-        for v in votedata:
+        #for v in votedata:
             # Prevent SQL injection by not directly inserting user input into SQL queries
-            cursor.execute('''SELECT * FROM songs''' + str(v[0]))
-            votedata[v[0]] = cursor.fetchall()
-            print(votedata)
-        cursor.execute('''SELECT * FROM songs''' + str(1))
-        songsdata = cursor.fetchall()
+            #cursor.execute('''SELECT * FROM songs''' + str(v[0]))
+            #votedata[v[0]] = cursor.fetchall()
+            #print(votedata)
+        #cursor.execute('''SELECT * FROM songs''' + str(1))
+        #songsdata = cursor.fetchall()
         cursor.close()
-        songsdata.sort(key=sort_songs, reverse=True)
-    return render_template('index.html', songsdata=songsdata, votedata=votedata, events=events)
+        #songsdata.sort(key=sort_songs, reverse=True)
+    return render_template('index.html', events=events)
 
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
-        name = request.form['name']
+        firstname = request.form['firstname']
+        lastname = request.form['firstname']
+        user_type = request.form['user_type']
         email = request.form['email']
         username = request.form['username']
         password = request.form['password']
-        hashed_password = hash_password(password)
+        hashed_password = generate_password_hash(password, method='pbkdf2:sha256')
+        print(hashed_password)
         try:
-            with sqlite3.connect('NSDJ.db') as db:
+            with sqlite3.connect('Esportsapp.db') as db:
                 cursor = db.cursor()
                 # Insert user data into the 'users' table, using parameters to prevent SQL injection
-                cursor.execute('INSERT INTO users (name, email, username, hashed_password) VALUES (?, ?, ?, ?)', (name, email, username, hashed_password))
+                cursor.execute('INSERT INTO users (firstname, lastname, user_type, email, username, hashed_password) VALUES (?, ?, ?, ?, ?, ?)', (firstname, lastname, user_type, email, username, hashed_password))
                 db.commit()
             flash('Registered successfully!', 'success')
             return redirect(url_for('login'))
@@ -65,13 +67,17 @@ def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        with sqlite3.connect('NSDJ.db') as db:
+        with sqlite3.connect('Esportsapp.db') as db:
             cursor = db.cursor()
             # Select user data using a parameter to prevent SQL injection
             cursor.execute('SELECT * FROM users WHERE username = ?', (username,))
             user = cursor.fetchone()
             cursor.close()
-            if user and check_password(user[4], password):
+            #CHECK HERE! User call is messed up.
+            print(type(password))
+            print(password)
+            print(user[6])
+            if user and check_password_hash(user[6], password):
                 session['user'] = user[0]
                 return redirect(url_for('index'))
             else:
@@ -118,7 +124,7 @@ def results_songs(albumID, songID):
     songinfo = song_info(songID)
     print(songinfo)
     if request.method == 'POST':
-        with sqlite3.connect('NSDJ.db') as db:
+        with sqlite3.connect('Esportsapp.db') as db:
             cursor = db.cursor()
             cursor.execute('''SELECT * FROM songs'''+str(1)+''' WHERE song_ID = ?''', (int(songID),))
             eventsong = cursor.fetchone()
@@ -174,7 +180,7 @@ def event():
     events = None
     if "user" not in session:
         return redirect(url_for('login'))
-    with sqlite3.connect('NSDJ.db') as db:
+    with sqlite3.connect('Esportsapp.db') as db:
         cursor = db.cursor()
         cursor.execute('''SELECT * FROM events''')
         events = cursor.fetchall()
@@ -211,9 +217,9 @@ def create_event():
         if user in session:
             return redirect(url_for('login'))
         try:
-            with sqlite3.connect('NSDJ.db') as db:
+            with sqlite3.connect('Esportsapp.db') as db:
                 cursor = db.cursor()
-                print("started with sqlite3.connect('NSDJ.db') as db:")
+                print("started with sqlite3.connect('Esportsapp.db') as db:")
                 cursor.execute('''INSERT INTO events (name, time, location, description) VALUES (?, ?, ?, ?)''', (event_name, time, location, description))
                 db.commit()
                 # cursor.execute('''CREATE TABLE IF NOT EXISTS event_id_attendees (attendee_ID TEXT, event_ID TEXT)''')
@@ -239,7 +245,7 @@ def create_event():
 def event_data():
     if "user" not in session:
         return redirect(url_for('login'))
-    with sqlite3.connect('NSDJ.db') as db:
+    with sqlite3.connect('Esportsapp.db') as db:
         cursor = db.cursor()
         cursor.execute('''SELECT * FROM events''')
         events = cursor.fetchall()
@@ -247,4 +253,4 @@ def event_data():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=4002)

@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, flash, ses
 import bcrypt
 import sqlite3
 import requests
+import pandas as pd
 
 app = Flask(__name__)
 app.secret_key = 's3cr3t'
@@ -16,6 +17,9 @@ def check_password(hashed_password, user_password):
     # Check if a provided password matches the hashed password in the database
     return bcrypt.checkpw(user_password.encode('utf-8'), hashed_password)
 
+
+gamesdoc = pd.read_excel('/Users/asgibsonpc2022/PycharmProjects/FinalNorthsideDJ/app_ia2/GameData.xlsx')
+print(gamesdoc.head())
 
 @app.route('/')
 def index():
