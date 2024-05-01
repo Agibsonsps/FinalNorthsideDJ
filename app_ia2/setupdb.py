@@ -32,9 +32,9 @@ cursor.execute('''
     CREATE TABLE IF NOT EXISTS friends 
     (
         friending_ID INTEGER PRIMARY KEY AUTOINCREMENT, 
-        user_ID(1) TEXT, 
-        user_ID(2) TEXT, 
-        verify BOOLEAN, 
+        user_ID1 TEXT, 
+        user_ID2 TEXT, 
+        verify BOOLEAN
     )
 ''')
 
@@ -48,7 +48,7 @@ cursor.execute('''
         description TEXT,
         end TEXT,
         game_ID,
-        platform,
+        platform
     )
 ''')
 #USE WHEN MAKING TOURNAMENTS IN APP.PY
@@ -63,12 +63,13 @@ cursor.execute('''
     #)
 #''')
 
+
 cursor.execute('''
     CREATE TABLE IF NOT EXISTS teams 
     (
         team_ID INTEGER PRIMARY KEY AUTOINCREMENT, 
         leader_ID INTEGER, 
-        team_name TEXT,
+        team_name TEXT
     )
 ''')
 
@@ -76,7 +77,7 @@ cursor.execute('''
     CREATE TABLE IF NOT EXISTS team_members 
     (
         team_ID INTEGER PRIMARY KEY, 
-        user_ID INTEGER,
+        user_ID INTEGER
     )
 ''')
 
@@ -85,7 +86,7 @@ cursor.execute('''
     (
         fave_game_ID INTEGER PRIMARY KEY AUTOINCREMENT,
         user_ID INTEGER,
-        game_ID INTEGER,
+        game_ID INTEGER
     )
 ''')
 
@@ -94,7 +95,7 @@ cursor.execute('''
     (
         fave_genre_ID INTEGER PRIMARY KEY AUTOINCREMENT,
         user_ID INTEGER,
-        genre_ID INTEGER,
+        genre_ID INTEGER
     )
 ''')
 
@@ -102,12 +103,12 @@ cursor.execute('''
     CREATE TABLE IF NOT EXISTS genres
     (
         genre_ID INTEGER PRIMARY KEY AUTOINCREMENT,
-        Name INTEGER,
+        name INTEGER
     )
 ''')
 cursor.execute('''
-INSERT INTO genres (name, time, location, description) VALUES (?, ?, ?, ?)
-''', (event_name, time, location, description))
+INSERT INTO genres (name) VALUES (?)
+''', ("action",))
 
 
 conn.commit()

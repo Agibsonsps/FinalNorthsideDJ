@@ -1,3 +1,4 @@
+import openpyxl
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 import sqlite3
 import requests
@@ -93,13 +94,12 @@ def logout():
 
 @app.route('/search', methods=['GET', 'POST'])
 def search():
-# this gets the artist name and returns albyms to results.html
     if "user" not in session:
         return redirect(url_for('login'))
     if request.method == 'POST':
-        artist_name = request.form['artist']
-        albums = search_albums(artist_name)
-        return render_template('results.html', artist=artist_name, albums=albums)
+        game_name = request.form['game']
+        gameresults = search_games(game_name)
+        return render_template('results.html', game_name=game_name, gameresults=gameresults)
     return render_template('search.html')
 
 
@@ -140,15 +140,26 @@ def results_songs(albumID, songID):
     return render_template('results_songid.html', albumID=albumID, songID=songID, songinfo=songinfo)
 
 
-def search_albums(artist_name):
-    # Search for albums by an artist using an external API
-    api_key = '523532'
-    url = f'https://theaudiodb.com/api/v1/json/{api_key}/searchalbum.php?s={artist_name}'
-    response = requests.get(url)
-    data = response.json()
-    albums = data['album']
-    albumID = albums[0]['idAlbum']
-    return albums
+def search_games(game):
+    query = game.lower()
+    wb = openpyxl.load_workbook('Cleaned_Game_Data.xlsx')
+    ws = wb["Data_Used_For_Reviews"]
+    games_dict = {}
+    for row in ws.iter_rows(min_row=2, values_only=True):
+        if not row[25]:
+            continue
+        game_title = row[2]
+        game_details = {
+            "trailer_link": row[25],
+            "id": row[1],
+        }
+        if query in game_title.lower():
+            games_dict[game_title] = game_details
+        print(games_dict)
+
+    game_ID = gamesdoc[0]['gameid']
+
+    return games_dict
 
 
 def search_songs(albumID):
