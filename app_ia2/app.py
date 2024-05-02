@@ -142,7 +142,7 @@ def results_songs(albumID, songID):
 
 def search_games(game):
     query = game.lower()
-    wb = openpyxl.load_workbook('Cleaned_Game_Data.xlsx')
+    wb = openpyxl.load_workbook('/Users/asgibsonpc2022/PycharmProjects/FinalNorthsideDJ/app_ia2/GameData.xlsx')
     ws = wb["Data_Used_For_Reviews"]
     games_dict = {}
     for row in ws.iter_rows(min_row=2, values_only=True):
@@ -157,8 +157,7 @@ def search_games(game):
             games_dict[game_title] = game_details
         print(games_dict)
 
-    game_ID = gamesdoc[0]['gameid']
-
+    game_ID = gamesdoc[1]['gameid']
     return games_dict
 
 
