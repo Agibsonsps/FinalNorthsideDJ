@@ -14,7 +14,6 @@ def hash_password(password):
 
 
 gamesdoc = pd.read_excel('/Users/asgibsonpc2022/PycharmProjects/FinalNorthsideDJ/app_ia2/GameData.xlsx')
-print(gamesdoc.head())
 
 
 @app.route('/')
@@ -103,41 +102,12 @@ def search():
     return render_template('search.html')
 
 
-@app.route('/results/<albumID>', methods=['GET', 'POST'])
-def results(albumID):
-    if "user" not in session:
-        return redirect(url_for('login'))
-    print("Album ID: ", albumID)
-    songs = search_songs(albumID)
-    strAlbum = songs[0]['strAlbum']
-    return render_template('results_albumid.html', songs=songs, strAlbum=strAlbum, albumID=albumID)
-
-
-@app.route('/results/<albumID>/<songID>', methods=['GET', 'POST'])
-def results_songs(albumID, songID):
+@app.route('/results', methods=['GET', 'POST'])
+def results():
     # Display details about a selected song and allow users to add it to a playlist
     if "user" not in session:
         return redirect(url_for('login'))
-    print("Album ID-Songs: ", albumID)
-    print("Song ID: ", songID)
-    print(request.method)
-    songinfo = song_info(songID)
-    print(songinfo)
-    if request.method == 'POST':
-        with sqlite3.connect('Esportsapp.db') as db:
-            cursor = db.cursor()
-            cursor.execute('''SELECT * FROM songs'''+str(1)+''' WHERE song_ID = ?''', (int(songID),))
-            eventsong = cursor.fetchone()
-            votes = 0
-            if eventsong:
-                votes = eventsong[4]
-            votes += 1
-            cursor.execute('''INSERT OR REPLACE INTO songs'''+str(1)+''' (song_ID, name, artist, album, votes) VALUES (?, ?, ?, ?, ?)''', (int(songID), songinfo['strTrack'], songinfo['strArtist'], songinfo['strAlbum'], votes))
-            db.commit()
-            cursor.close()
-        flash('Song added to playlist!', 'success')
-        return redirect(url_for('search'))
-    return render_template('results_songid.html', albumID=albumID, songID=songID, songinfo=songinfo)
+    return render_template('results.html')
 
 
 def search_games(game):
@@ -155,32 +125,8 @@ def search_games(game):
         }
         if query in game_title.lower():
             games_dict[game_title] = game_details
-        print(games_dict)
-
-    game_ID = gamesdoc[1]['gameid']
+    print(request.form['game'])
     return games_dict
-
-
-def search_songs(albumID):
-    # Search for songs by album ID using an external API
-    api_key = '523532'
-    url = f'https://theaudiodb.com/api/v1/json/{api_key}/track.php?m={albumID}'
-    response = requests.get(url)
-    data = response.json()
-    songs = data['track']
-    print("Song info:", songs)
-    return songs
-
-
-def song_info(songID):
-    # Get information about a song by song ID using an external API
-    api_key = '523532'
-    url = f'https://theaudiodb.com/api/v1/json/{api_key}/track.php?h={songID}'
-    response = requests.get(url)
-    data = response.json()
-    song = data['track']
-    print("Song info:", song)
-    return song[0]
 
 
 @app.route('/event', methods=['GET', 'POST'])
@@ -192,23 +138,12 @@ def event():
         return redirect(url_for('login'))
     with sqlite3.connect('Esportsapp.db') as db:
         cursor = db.cursor()
-        cursor.execute('''SELECT * FROM events''')
-        events = cursor.fetchall()
-        votedata = {}
-        for v in votedata:
-            cursor.execute('''SELECT * FROM songs''' + str(v[0]))
-            votedata[v[0]] = cursor.fetchall()
-        print(votedata)
-        cursor.execute('''SELECT * FROM songs''' + str(1))
-        songsdata = cursor.fetchall()
-        print(songsdata)
-        cursor.close()
-        songsdata.sort(key=sort_songs, reverse=True)
-        return render_template('event.html', events=events, votedata=votedata, songsdata=songsdata)
+        return render_template('event.html')
 
 
-def sort_songs(data):
-    return data[4]
+@app.route('/profile', methods={'GET', 'POST'})
+def profile():
+    return render_template('profile.html')
 
 
 @app.route('/create_event', methods=['GET', 'POST'])

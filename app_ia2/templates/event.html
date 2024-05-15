@@ -27,27 +27,6 @@
   }
 </style>
 <div>
-<h1>Event List</h1>
-
-<div id="event-container">
-    {% for event in events %}
-      <div class="event-block">
-        <h2>{{ event[1] }}</h2> <!-- Event name -->
-        <p>Time: {{ event[2] }}</p> <!-- Event time -->
-        <p>Location: {{ event[3] }}</p> <!-- Event location -->
-        <p>Description: {{ event[4] }}</p>
-        <h3>Current Playlist:</h3>
-        {% for song in songsdata %}
-          <p>{{ song[1] }} • {{song[2]}} • {{song[4]}}</p>
-        {% endfor %}
-      </div>
-      {% if loop.index % 3 == 0 %}
-        <br style="clear: both;" /> <!-- Clear the float after every three events -->
-      {% endif %}
-  {% endfor %}
-</div>
+<h1>Tournaments</h1>
   <a href="{{ url_for('create_event') }}" class="w3-button w3-blue" style="margin-right: 20px;">Create an Event</a></div>
-<br>
-<div></div>
-<br>
 {% endblock %}
