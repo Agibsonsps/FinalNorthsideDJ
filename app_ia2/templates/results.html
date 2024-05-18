@@ -7,20 +7,33 @@ p {text-align: center;}
 div {text-align: center;}
 input {text-align: center;}
 img {text-align: center;}
-
 </style>
 <body>
+<h1>Games for {{ game_query }}</h1>
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <ul class="flashes">
+            {% for category, message in messages %}
+                <li class="{{ category }}">{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endwith %}
+{% for game_title, game_info in gameresults.items() %}
+    <lu style="center;">
+        <h1>{{ game_title }}</h1>
+        <p>Trailer Link: <a href="{{ game_info.trailer_link }}">{{ game_info.trailer_link }}</a></p>
+        <input type="hidden" name="game_id" value="{{ game_info.id }}">
+        {% set id = game_info.trailer_link.split('=')[1] %}
+        <img src="https://img.youtube.com/vi/{{id}}/hqdefault.jpg">
+        <form action="{{ url_for('add_favorite') }}" method="POST">
+            <input type="hidden" name="game_id" value="{{ game_info.id }}">
+            <input type="hidden" name="game_title" value="{{ game_title }}">
+            <button type="submit">Favorite</button>
+        </form>
+    </lu>
+{% endfor %}
 
-<h1>Games for {{ game_name }}</h1>
-        {% for game_title, game_info in gameresults.items() %}
-                <lu style="centre;">
-                <h1>{{ game_title }}</h1>
-                <p>Trailer Link: <a href="{{ game_info.trailer_link }}">{{ game_info.trailer_link }}</a></p>
-                <input type="hidden" name="game_id" value="{{ game_info.id }}">
-                {% set id = game_info.trailer_link.split('=')[1] %}
-                <img src="https://img.youtube.com/vi/{{id}}/hqdefault.jpg">
-                        <form><button type="submit" formmethod = "POST">Favorite</button></form>
-                </lu>
-        {% endfor %}
+
 </body>
 {% endblock %}

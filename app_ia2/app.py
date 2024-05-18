@@ -104,10 +104,11 @@ def search():
 
 @app.route('/results', methods=['GET', 'POST'])
 def results():
-    # Display details about a selected song and allow users to add it to a playlist
     if "user" not in session:
         return redirect(url_for('login'))
-    return render_template('results.html')
+    game_query = request.form.get('game', '')
+    gameresults = search_games(game_query)
+    return render_template('results.html', game_query=game_query, gameresults=gameresults)
 
 
 def search_games(game):
@@ -125,7 +126,6 @@ def search_games(game):
         }
         if query in game_title.lower():
             games_dict[game_title] = game_details
-    print(request.form['game'])
     return games_dict
 
 
@@ -141,9 +141,52 @@ def event():
         return render_template('event.html')
 
 
-@app.route('/profile', methods={'GET', 'POST'})
+@app.route('/profile', methods=['GET', 'POST'])
 def profile():
-    return render_template('profile.html')
+    if "user" not in session:
+        return redirect(url_for('login'))
+    user_id = session['user']
+    favorite_games_ids = {}
+    favourite_games_data = {}
+    with sqlite3.connect('Esportsapp.db') as db:
+        cursor = db.cursor()
+        cursor.execute('SELECT * FROM fave_games WHERE user_ID = ?', (user_id,))
+        favorite_games_ids = cursor.fetchall()
+        cursor.close()
+        wb = openpyxl.load_workbook('/Users/asgibsonpc2022/PycharmProjects/FinalNorthsideDJ/app_ia2/GameData.xlsx')
+        ws = wb["Data_Used_For_Reviews"]
+        for row in ws.iter_rows(min_row=2, values_only=True):
+            for game_id in favorite_games_ids:
+                if row[1] == game_id:
+                    favourite_games_data[row[2]] = {
+                        "trailer_link": row[25],
+                        "id": row[1],
+                    }
+    return render_template('profile.html', favourite_games_data=favourite_games_data)
+
+
+@app.route('/add_favorite', methods=['POST'])
+def add_favorite():
+    if "user" not in session:
+        return redirect(url_for('login'))
+    game_id = request.form['game_id']
+    game_title = request.form['game_title']
+    user_id = session['user']
+    with sqlite3.connect('Esportsapp.db') as db:
+        cursor = db.cursor()
+        cursor.execute('SELECT * FROM fave_games WHERE user_ID = ?', (user_id,))
+        favorite_games = cursor.fetchall()
+        db.cursor().close()
+    if game_id in favorite_games:
+        flash('Game already in favorites!', 'danger')
+        return redirect(url_for('results'))
+    else:
+        with sqlite3.connect('Esportsapp.db') as db:
+            cursor = db.cursor()
+            cursor.execute('INSERT INTO fave_games (user_ID, game_ID) VALUES (?, ?)', (user_id, game_id))
+            db.commit()
+            flash(game_title + ' added to favorites!')
+            return redirect(url_for('results'))
 
 
 @app.route('/create_event', methods=['GET', 'POST'])

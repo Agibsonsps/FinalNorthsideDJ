@@ -1,10 +1,20 @@
 {% extends "base.html" %}
-{% block title %}Results{% endblock %}
+{% block title %}Profile{% endblock %}
 {% block content %}
 <body>
-Name and ID
 <br>
-favorites
+Favourites:
+<ul>
+{% for game in favorite_games_ids %}
+    <li>{{ game[2] }}</li>  <!-- Assuming the game ID is the second element in the tuple -->
+{% endfor %}
+{{ favourite_games_data }}
+</ul>
+<br>
+{% for game in favourite_games_data %}
+    <a href="{{ game.trailer_link }}">{{ favourite_games_data.title }}</a>
+    <img src="https://img.youtube.com/vi/{{ game.trailer_link.split('=')[1] }}/hqdefault.jpg">
+{% endfor %}
+
 </body>
-</html>
 {% endblock %}
