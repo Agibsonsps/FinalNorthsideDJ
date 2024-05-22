@@ -172,7 +172,7 @@ def song_info(songID):
 
 
 @app.route('/event', methods=['GET', 'POST'])
-# this get all event info and returns to event.html
+# this get all event info and returns to tournament.html
 def event():
     # this returns all events with all songs voted for. (not per event)
     events = None
@@ -192,7 +192,7 @@ def event():
         print(songsdata)
         cursor.close()
         songsdata.sort(key=sort_songs, reverse=True)
-        return render_template('event.html', events=events, votedata=votedata, songsdata=songsdata)
+        return render_template('tournament.html', events=events, votedata=votedata, songsdata=songsdata)
 
 
 def sort_songs(data):
@@ -200,7 +200,7 @@ def sort_songs(data):
 
 
 @app.route('/create_event', methods=['GET', 'POST'])
-# this creates a new event and returns to event.html
+# this creates a new event and returns to tournament.html
 def create_event():
     if "user" not in session:
         return redirect(url_for('login'))
@@ -232,11 +232,11 @@ def create_event():
                 # make attendee table
                 cursor.execute('''CREATE TABLE IF NOT EXISTS attendees (event_ID INTEGER PRIMARY KEY, name TEXT, email TEXT, username TEXT, hashed_password TEXT)''')
                 db.commit()
-            return render_template('event.html', event_name=event_name, time=time, location=location, description=description)
+            return render_template('tournament.html', event_name=event_name, time=time, location=location, description=description)
         except sqlite3.IntegrityError:
             flash('Event already exists!', 'danger')
         db.close()
-    return render_template('create_event.html')
+    return render_template('create_tournament.html')
 
 
 @app.route('/event_data')

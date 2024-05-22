@@ -3,23 +3,135 @@
 {% block content %}
 <body>
 <style>
-    h1 {text-align: center; padding: 10px; text-colour: #123456;}
-    form {padding: 5px; text-align: center;}
-    div { color: green; }
+    h1 {
+        text-align: center;
+        padding: 10px;
+        color: #123456;
+    }
+    form {
+        padding: 5px;
+        text-align: center;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    div {
+        color: green;
+    }
+    .input {
+        margin: 30px;
+        background: none;
+        border: none;
+        outline: none;
+        max-width: 190px;
+        padding: 10px 20px;
+        font-size: 16px;
+        border-radius: 9999px;
+        box-shadow: inset 2px 5px 10px rgb(5, 5, 5);
+        color: #000;  /* Changed to black */
+    }
+    .animated-button {
+        margin-left: 10px;  /* Add some space between the input and the button */
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        padding: 16px 36px;
+        border: 4px solid;
+        border-color: transparent;
+        font-size: 16px;
+        background-color: #fff; /* You can set a background color here */
+        border-radius: 100px;
+        font-weight: 600;
+        color: #1f387e;
+        box-shadow: 0 0 0 2px #ffffff;
+        cursor: pointer;
+        overflow: hidden;
+        transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+    .animated-button svg {
+        position: absolute;
+        width: 24px;
+        fill: #1f387e;
+        z-index: 9;
+        transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+    .animated-button .arr-1 {
+        right: 16px;
+    }
+    .animated-button .arr-2 {
+        left: -25%;
+    }
+    .animated-button .circle {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 20px;
+        height: 20px;
+        background-color: #c5e5e4;
+        border-radius: 50%;
+        opacity: 0;
+        transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+    .animated-button .text {
+        position: relative;
+        z-index: 1;
+        transform: translateX(-12px);
+        transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+    .animated-button:hover {
+        box-shadow: 0 0 0 12px transparent;
+        color: #212121;
+        border-radius: 12px;
+    }
+    .animated-button:hover .arr-1 {
+        right: -25%;
+    }
+    .animated-button:hover .arr-2 {
+        left: 16px;
+    }
+    .animated-button:hover .text {
+        transform: translateX(12px);
+    }
+    .animated-button:hover svg {
+        fill: #1f387e;
+    }
+    .animated-button:active {
+        scale: 0.95;
+        box-shadow: 0 0 0 4px greenyellow;
+    }
+    .animated-button:hover .circle {
+        width: 220px;
+        height: 220px;
+        opacity: 1;
+    }
 </style>
-    <h1>Search for your favourite Artists:</h1>
-    <form action = "/search" method = "post">
-    <label>Game Name:</label>
-    <input type="text" name="game" required>
-        <button type="submit" >Submit</button>
+    <h1>Search Games:</h1>
+    <form action="/search" method="post">
+        <label>Game Name:</label>
+        <input type="text" name="query" required class="input">
+        <button type="submit" class="animated-button">
+          <svg xmlns="http://www.w3.org/2000/svg" class="arr-2" viewBox="0 0 24 24">
+            <path
+              d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z"
+            ></path>
+          </svg>
+          <span class="text">Submit</span>
+          <span class="circle"></span>
+          <svg xmlns="http://www.w3.org/2000/svg" class="arr-1" viewBox="0 0 24 24">
+            <path
+              d="M16.1716 10.9999L10.8076 5.63589L12.2218 4.22168L20 11.9999L12.2218 19.778L10.8076 18.3638L16.1716 12.9999H4V10.9999H16.1716Z"
+            ></path>
+          </svg>
+        </button>
     </form>
 {% for category, message in get_flashed_messages(with_categories=true) %}
-        <div class="w3-panel w3-{{ category }} w3-display-container">
-            <span onclick="this.parentElement.style.display='none'"
-                  class="w3-button w3-{{ category }} w3-large w3-display-topright">&times;</span>
-            {{ message }}
-        </div>
-    {% endfor %}
+    <div class="w3-panel w3-{{ category }} w3-display-container">
+        <span onclick="this.parentElement.style.display='none'"
+              class="w3-button w3-{{ category }} w3-large w3-display-topright">&times;</span>
+        {{ message }}
+    </div>
+{% endfor %}
 </body>
 {% endblock %}
-```

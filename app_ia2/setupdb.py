@@ -48,7 +48,8 @@ cursor.execute('''
         description TEXT,
         end TEXT,
         game_ID,
-        platform
+        platform,
+        game_tn_url TEXT
     )
 ''')
 #USE WHEN MAKING TOURNAMENTS IN APP.PY

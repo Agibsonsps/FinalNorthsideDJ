@@ -1,29 +1,186 @@
 {% extends "base.html" %}
 {% block title %}Register{% endblock %}
 {% block content %}
-    <h1>Register</h1>
-    <form method="post" class="w3-container w3-card-4 w3-padding">
-        <label>First Name</label>
-        <input type="text" name="firstname" class="w3-input w3-border" required>
-        <label>Last Name</label>
-        <input type="text" name="lastname" class="w3-input w3-border" required>
-        <label>Email</label>
-        <input type="text" name="email" class="w3-input w3-border" required>
-        <label>User Type</label>
-        <input type="text" name="user_type" class="w3-input w3-border" required>
-        <label>Username</label>
-        <input type="text" name="username" class="w3-input w3-border" required>
-        <label>Password</label>
-        <input type="password" name="password" class="w3-input w3-border" required>
-        <button type="submit" class="w3-button w3-green">Register</button>
-    </form>
-    <div>
-        <p>Already Have an account?</p> <a href="{{ url_for('login') }}" class="w3-button w3-blue">Login</a>
-    {% for category, message in get_flashed_messages(with_categories=true) %}
-        <div class="w3-panel w3-{{ category }} w3-display-container">
-            <span onclick="this.parentElement.style.display='none'"
-                  class="w3-button w3-{{ category }} w3-large w3-display-topright">&times;</span>
-            {{ message }}
+<body>
+<style>
+    .form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-width: 350px;
+      padding: 20px;
+      border-radius: 20px;
+      position: relative;
+      background-color: #1a1a1a;
+      color: #fff;
+      border: 1px solid #333;
+      margin: auto;
+      margin-top: 20px;
+    }
+
+    .title {
+      font-size: 28px;
+      font-weight: 600;
+      letter-spacing: -1px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      padding-left: 30px;
+      color: #00bfff;
+    }
+
+    .title::before,
+    .title::after {
+      width: 18px;
+      height: 18px;
+      position: absolute;
+      content: "";
+      border-radius: 50%;
+      left: 0px;
+      background-color: #00bfff;
+    }
+
+    .title::after {
+      animation: pulse 1s linear infinite;
+    }
+
+    .message,
+    .signin {
+      font-size: 14.5px;
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .signin {
+      text-align: center;
+    }
+
+    .signin a:hover {
+      text-decoration: underline royalblue;
+    }
+
+    .signin a {
+      color: #00bfff;
+    }
+
+    .flex {
+      display: flex;
+      width: 100%;
+      gap: 6px;
+    }
+
+    .form label {
+      position: relative;
+    }
+
+    .form label .input {
+      background-color: #333;
+      color: #fff;
+      width: 100%;
+      padding: 20px 5px 5px 10px;
+      outline: 0;
+      border: 1px solid rgba(105, 105, 105, 0.397);
+      border-radius: 10px;
+    }
+
+    .form label .input + span {
+      color: rgba(255, 255, 255, 0.5);
+      position: absolute;
+      left: 10px;
+      top: 0px;
+      font-size: 0.9em;
+      cursor: text;
+      transition: 0.3s ease;
+    }
+
+    .form label .input:placeholder-shown + span {
+      top: 12.5px;
+      font-size: 0.9em;
+    }
+
+    .form label .input:focus + span,
+    .form label .input:valid + span {
+      color: #00bfff;
+      top: 0px;
+      font-size: 0.7em;
+      font-weight: 600;
+    }
+
+    .input {
+      font-size: medium;
+    }
+
+    .submit {
+      border: none;
+      outline: none;
+      padding: 10px;
+      border-radius: 10px;
+      color: #fff;
+      font-size: 16px;
+      transition: .3s ease;
+      background-color: #00bfff;
+    }
+
+    .submit:hover {
+      background-color: #00bfff96;
+    }
+
+    @keyframes pulse {
+      from {
+        transform: scale(0.9);
+        opacity: 1;
+      }
+
+      to {
+        transform: scale(1.8);
+        opacity: 0;
+      }
+    }
+</style>
+    <h1 class="title">Register</h1>
+    <form method="post" class="form">
+        <div class="flex">
+            <label>
+                <input type="text" name="firstname" class="input" required>
+                <span>First Name</span>
+            </label>
+            <label>
+                <input type="text" name="lastname" class="input" required>
+                <span>Last Name</span>
+            </label>
         </div>
-    {% endfor %}
+        <label>
+            <input type="text" name="email" class="input" required>
+            <span>Email</span>
+        </label>
+        <label>
+            <select name="user_type" class="input" required>
+                <option value="" disabled selected>Select your option</option>
+                <option value="Player">Player</option>
+                <option value="Sponsor">Sponsor</option>
+                <option value="Coordinator">Coordinator</option>
+            </select>
+            <span>User Type</span>
+        </label>
+        <label>
+            <input type="text" name="username" class="input" required>
+            <span>Username</span>
+        </label>
+        <label>
+            <input type="password" name="password" class="input" required>
+            <span>Password</span>
+        </label>
+        <button type="submit" class="submit">Register</button>
+    </form>
+    <div class="signin">
+        <p>Already have an account?</p>
+        <a href="{{ url_for('login') }}">Login</a>
+    </div>
+{% for category, message in get_flashed_messages(with_categories=true) %}
+    <div class="w3-panel w3-{{ category }} w3-display-container">
+        <span onclick="this.parentElement.style.display='none'"
+              class="w3-button w3-{{ category }} w3-large w3-display-topright">&times;</span>
+        {{ message }}
+    </div>
+{% endfor %}
+</body>
 {% endblock %}

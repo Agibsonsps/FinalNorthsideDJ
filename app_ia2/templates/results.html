@@ -1,39 +1,35 @@
 {% extends "base.html" %}
-{% block title %}Results{% endblock %}
+
+{% block title %}Profile{% endblock %}
+
 {% block content %}
-<style>
-h1 {text-align: center;}
-p {text-align: center;}
-div {text-align: center;}
-input {text-align: center;}
-img {text-align: center;}
-</style>
 <body>
-<h1>Games for {{ game_query }}</h1>
-{% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-        <ul class="flashes">
-            {% for category, message in messages %}
-                <li class="{{ category }}">{{ message }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-{% endwith %}
-{% for game_title, game_info in gameresults.items() %}
-    <lu style="center;">
-        <h1>{{ game_title }}</h1>
-        <p>Trailer Link: <a href="{{ game_info.trailer_link }}">{{ game_info.trailer_link }}</a></p>
-        <input type="hidden" name="game_id" value="{{ game_info.id }}">
-        {% set id = game_info.trailer_link.split('=')[1] %}
-        <img src="https://img.youtube.com/vi/{{id}}/hqdefault.jpg">
-        <form action="{{ url_for('add_favorite') }}" method="POST">
-            <input type="hidden" name="game_id" value="{{ game_info.id }}">
-            <input type="hidden" name="game_title" value="{{ game_title }}">
-            <button type="submit">Favorite</button>
-        </form>
-    </lu>
-{% endfor %}
-
-
+    <h1>Search Results for "{{ query }}"</h1>
+    <ul>
+        {% for game_title, game_details in gameresults.items() %}
+            <li>
+                <h2>{{ game_title }}</h2>
+                {% if game_details.trailer_link %}
+                    <a href="{{ game_details.trailer_link }}" target="_blank">
+                        <img src="{{ game_details.thumbnail_link }}" alt="YouTube thumbnail for {{ game_title }}">
+                    </a>
+                {% endif %}
+                <form method="post" action="{{ url_for('toggle_favorite') }}">
+                    <input type="hidden" name="game_id" value="{{ game_details.id }}">
+                    <input type="hidden" name="query" value="{{ query }}">
+                    {% if game_details.id in favorite_games %}
+                        <input type="hidden" name="action" value="unfavorite">
+                        <button type="submit">Unfavorite</button>
+                        <input type="hidden" name="query" value="{{ query }}">
+                    {% else %}
+                        <input type="hidden" name="action" value="favorite">
+                        <button type="submit">Favorite</button>
+                        <input type="hidden" name="query" value="{{ query }}">
+                    {% endif %}
+                </form>
+            </li>
+        {% endfor %}
+    </ul>
 </body>
+</html>
 {% endblock %}

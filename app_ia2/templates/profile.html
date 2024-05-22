@@ -1,20 +1,63 @@
 {% extends "base.html" %}
-{% block title %}Profile{% endblock %}
-{% block content %}
-<body>
-<br>
-Favourites:
-<ul>
-{% for game in favorite_games_ids %}
-    <li>{{ game[2] }}</li>  <!-- Assuming the game ID is the second element in the tuple -->
-{% endfor %}
-{{ favourite_games_data }}
-</ul>
-<br>
-{% for game in favourite_games_data %}
-    <a href="{{ game.trailer_link }}">{{ favourite_games_data.title }}</a>
-    <img src="https://img.youtube.com/vi/{{ game.trailer_link.split('=')[1] }}/hqdefault.jpg">
-{% endfor %}
 
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        margin: 20px;
+    }
+    .user-info {
+        margin-bottom: 20px;
+    }
+    .favourite-games {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+    .game {
+        border: 1px solid #ddd;
+        padding: 10px;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+        max-width: 200px;
+        text-align: center;
+    }
+    .game img {
+        width: 100%;
+        border-radius: 5px;
+    }
+    .game a {
+        display: block;
+        margin: 10px 0;
+        font-weight: bold;
+        color: #333;
+        text-decoration: none;
+    }
+    .game a:hover {
+        text-decoration: underline;
+    }
+</style>
+<body>
+    <div class="user-info">
+        <h1>Hello, {{ first_name }} {{ last_name }}!</h1>
+        <p><strong>Username:</strong> {{ username }}</p>
+        <p><strong>Email:</strong> {{ email }}</p>
+        <p><strong>User Type:</strong> {{ user_type }}</p>
+        <p><strong>User ID:</strong> {{ user_id }}</p>
+    </div>
+
+    <h2>Favourites:</h2>
+    <div class="favourite-games">
+        {% for game in favourite_games_data %}
+            <div class="game">
+                <a href="{{ game.trailer_link }}" target="_blank">{{ game.title }}</a>
+                {% set video_id = game.trailer_link.split('v=')[-1].split('&')[0] %}
+                <img src="https://img.youtube.com/vi/{{ video_id }}/hqdefault.jpg" alt="{{ game.title }} trailer thumbnail">
+            </div>
+        {% endfor %}
+    </div>
 </body>
 {% endblock %}
