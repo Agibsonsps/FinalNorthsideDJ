@@ -2,39 +2,200 @@
 {% block title %}Create Tournament{% endblock %}
 {% block content %}
 <body>
-  <h1>Create Tournament</h1>
-  <form action="{{ url_for('create_tournament') }}" method="post">
-    <label for="type">Type:</label><br>
-    <select id="type" name="type" required>
-      <option value="single_event">Single Event</option>
-      <option value="series">Series</option>
-      <option value="charity">Charity</option>
-    </select><br>
+<style>
+    .form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-width: 350px;
+      padding: 20px;
+      border-radius: 20px;
+      position: relative;
+      background-color: #1a1a1a;
+      color: #fff;
+      border: 1px solid #333;
+      margin: auto;
+      margin-top: 20px;
+    }
 
-    <label for="start">Start:</label><br>
-    <input type="date" id="start" name="start" required><br>
+    .title {
+      font-size: 28px;
+      font-weight: 600;
+      letter-spacing: -1px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      padding-left: 30px;
+      color: #00bfff;
+    }
 
-    <label for="status">Status:</label><br>
-    <input type="text" id="status" name="status" required><br>
+    .title::before,
+    .title::after {
+      width: 18px;
+      height: 18px;
+      position: absolute;
+      content: "";
+      border-radius: 50%;
+      left: 0px;
+      background-color: #00bfff;
+    }
 
-    <label for="description">Description:</label><br>
-    <textarea id="description" name="description" rows="4" cols="50"></textarea><br>
+    .title::after {
+      animation: pulse 1s linear infinite;
+    }
 
-    <label for="end">End:</label><br>
-    <input type="date" id="end" name="end"><br>
+    .message,
+    .signin {
+      font-size: 14.5px;
+      color: rgba(255, 255, 255, 0.7);
+    }
 
-    <label for="game_ID">Game ID:</label><br>
-    <input type="number" id="game_ID" name="game_ID"> <a class="w3-bar-item w3-button w3-mobile" href="{{ url_for('search') }}" style="width: 10%">Game Search Here To Get ID</a><br>
+    .signin {
+      text-align: center;
+    }
 
-    <label for="platform">Platform:</label><br>
-    <select id="platform" name="platform">
-      <option value="PS4">PS4</option>
-      <option value="PS3">PS3</option>
-      <option value="Nintendo">Nintendo</option>
-      <option value="PSP">PSP</option>
-      <option value="Xbox360">Xbox360</option>
-    </select><br> <br>
-    <button type="submit">Create</button>
-  </form>
+    .signin a:hover {
+      text-decoration: underline royalblue;
+    }
+
+    .signin a {
+      color: #00bfff;
+    }
+
+    .flex {
+      display: flex;
+      width: 100%;
+      gap: 6px;
+    }
+
+    .form label {
+      position: relative;
+    }
+
+    .form label .input {
+      background-color: #333;
+      color: #fff;
+      width: 100%;
+      padding: 20px 5px 5px 10px;
+      outline: 0;
+      border: 1px solid rgba(105, 105, 105, 0.397);
+      border-radius: 10px;
+    }
+
+    .form label .input + span {
+      color: rgba(255, 255, 255, 0.5);
+      position: absolute;
+      left: 10px;
+      top: 0px;
+      font-size: 0.9em;
+      cursor: text;
+      transition: 0.3s ease;
+    }
+
+    .form label .input:placeholder-shown + span {
+      top: 12.5px;
+      font-size: 0.9em;
+    }
+
+    .form label .input:focus + span,
+    .form label .input:valid + span {
+      color: #00bfff;
+      top: 0px;
+      font-size: 0.7em;
+      font-weight: 600;
+    }
+
+    .input {
+      font-size: medium;
+    }
+
+    .submit {
+      border: none;
+      outline: none;
+      padding: 10px;
+      border-radius: 10px;
+      color: #fff;
+      font-size: 16px;
+      transition: .3s ease;
+      background-color: #00bfff;
+    }
+
+    .submit:hover {
+      background-color: #00bfff96;
+    }
+
+    @keyframes pulse {
+      from {
+        transform: scale(0.9);
+        opacity: 1;
+      }
+
+      to {
+        transform: scale(1.8);
+        opacity: 0;
+      }
+    }
+
+    .search-button {
+      display: inline-block;
+      margin-top: 10px;
+      background-color: #00bfff;
+      color: #fff;
+      padding: 10px;
+      border-radius: 10px;
+      text-align: center;
+      text-decoration: none;
+    }
+
+    .search-button:hover {
+      background-color: #00bfff96;
+    }
+
+</style>
+    <h1 class="title">Create Tournament</h1>
+    <form action="{{ url_for('create_tournament') }}" method="post" class="form">
+        <label>
+            <select id="type" name="type" class="input" required>
+                <option value="" disabled selected>Select your option</option>
+                <option value="single_event">Single Event</option>
+                <option value="series">Series</option>
+                <option value="charity">Charity</option>
+            </select>
+            <span>Type</span>
+        </label>
+        <label>
+            <input type="date" id="start" name="start" class="input" required>
+            <span>Start</span>
+        </label>
+        <label>
+            <input type="text" id="status" name="status" class="input" required>
+            <span>Status</span>
+        </label>
+        <label>
+            <textarea id="description" name="description" class="input" rows="4" cols="50"></textarea>
+            <span>Description</span>
+        </label>
+        <label>
+            <input type="date" id="end" name="end" class="input">
+            <span>End</span>
+        </label>
+        <label>
+            <input type="number" id="game_ID" name="game_ID" class="input">
+            <span>Game ID</span>
+        </label>
+        <a class="search-button" href="{{ url_for('search') }}">Game Search Here To Get ID</a>
+        <label>
+            <select id="platform" name="platform" class="input">
+                <option value="" disabled selected>Select your platform</option>
+                <option value="PS4">PS4</option>
+                <option value="PS3">PS3</option>
+                <option value="Nintendo">Nintendo</option>
+                <option value="PSP">PSP</option>
+                <option value="Xbox360">Xbox360</option>
+            </select>
+            <span>Platform</span>
+        </label>
+        <button type="submit" class="submit">Create</button>
+    </form>
 </body>
 {% endblock %}

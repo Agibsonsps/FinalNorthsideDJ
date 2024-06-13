@@ -12,6 +12,7 @@
                 {% if game_details.trailer_link %}
                     <a href="{{ game_details.trailer_link }}" target="_blank">
                         <img src="{{ game_details.thumbnail_link }}" alt="YouTube thumbnail for {{ game_title }}">
+                        {{ game_details.id }}
                     </a>
                 {% endif %}
                 <form method="post" action="{{ url_for('toggle_favorite') }}">

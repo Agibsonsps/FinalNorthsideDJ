@@ -41,7 +41,7 @@
             <p><strong>Participants:</strong> {{ players | join(', ') }}</p>
             <form action="{{ url_for('toggle_participation', tournament_id=tournament[0]) }}" method="POST">
                 {% if participating %}
-                    <button type="submit" class="btn btn-danger">Competing</button>
+                    <button type="submit" class="btn btn-danger">Un-compete</button>
                 {% else %}
                     <button type="submit" class="btn btn-success">Compete</button>
                 {% endif %}

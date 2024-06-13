@@ -92,7 +92,8 @@ def register():
                 # Create a new cursor
                 cursor = db.cursor()
                 # Insert user data into the 'users' table, using parameters to prevent SQL injection
-                cursor.execute('INSERT INTO users (firstname, lastname, user_type, email, username, hashed_password) VALUES (?, ?, ?, ?, ?, ?)', (firstname, lastname, user_type, email, username, hashed_password))
+                cursor.execute('INSERT INTO users (firstname, lastname, user_type, email, username, hashed_password) VALUES (?, ?, ?, ?, ?, ?)',
+                               (firstname, lastname, user_type, email, username, hashed_password))
                 db.commit()
             flash('Registered successfully!', 'success')
             # Redirect to the login page
@@ -259,7 +260,8 @@ def profile():
                 "title": row[2],
                 "trailer_link": row[25]
             })
-    return render_template('profile.html', favorite_games_ids=favorite_games_ids, favourite_games_data=favourite_games_data, username=username, email=email, user_type=user_type, first_name=firstname, last_name=lastname, user_id=user_id)
+    return render_template('profile.html', favorite_games_ids=favorite_games_ids, favourite_games_data=favourite_games_data,
+                           username=username, email=email, user_type=user_type, first_name=firstname, last_name=lastname, user_id=user_id)
 
 
 @app.route('/add_favorite', methods=['POST'])

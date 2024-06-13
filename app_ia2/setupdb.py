@@ -52,17 +52,6 @@ cursor.execute('''
         game_tn_url TEXT
     )
 ''')
-#USE WHEN MAKING TOURNAMENTS IN APP.PY
-#cursor.execute('''
- #   CREATE TABLE IF NOT EXISTS (tournament_ID)match(1)
-  #  (
-   #     match_ID INTEGER PRIMARY KEY AUTOINCREMENT,
-    #    tournament_ID,
-     #   datetime TEXT,
-      #  team_ID(1)
-       # team_ID(2)
-    #)
-#''')
 
 
 cursor.execute('''
